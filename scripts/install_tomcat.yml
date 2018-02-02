@@ -1,0 +1,24 @@
+---
+- hosts: '{{hostlist}}'
+  become: all
+  tasks:
+    - name: Creates directory software
+      file:
+        path: software
+        state: directory
+        mode: 0775
+        recurse: yes
+
+
+    - name: Download Tomcat
+      get_url:
+        url: https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.2/bin/apache-tomcat-9.0.2.tar.gz
+        dest: software
+        mode: 0440
+
+    - name: Extract Tomcat into software/tomcat
+      shell: cd software && tar -xf apache-tomcat-9.0.2.tar.gz
+#      unarchive:
+#        src: software/apache-tomcat-9.0.2.tar.gz
+#        dest: software
+        

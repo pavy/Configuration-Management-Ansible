@@ -1,0 +1,46 @@
+---
+#- import_playbook: install_java.yml hostlist=AppServer
+#- import_playbook: install_tomcat.yml hostlist=AppServer
+#- import_playbook: install_mysql.yml hostlist=AppServer
+#- import_playbook: install_maven.yml hostlist=AppServer
+- hosts: '{{hostlist}}'
+  become: yes
+  vars_prompt:
+    - name: "githubuser"
+      prompt: Enter GIT username
+      private: no
+
+    - name: "githubpassword"
+      prompt: Enter GIT password
+      private: yes
+
+    - name: "mysql_root_password"
+      prompt: Please enter mysql password
+      private: yes
+
+  tasks:
+    - name: Creates directory for CoffeeMaker
+      file:
+        path: Project
+        state: directory
+        mode: 0775
+        recurse: yes
+
+    - name: Clone CoffeeMaker repo
+      git:
+        repo: "https://{{ githubuser| urlencode }}:{{ githubpassword| urlencode }}@github.ncsu.edu/engr-csc326-staff/Onboarding.git"
+        dest: 'Project'
+
+    - name: Copy hibernate file
+      template: 
+        src: templates/hibernate-template.cfg.xml
+        dest: 'Project/CoffeeMaker/src/main/resources/hibernate.cfg.xml'
+
+#    - name: Start Application
+#      shell: 'nohup bash -c "mvn spring-boot:run" &'
+#      args:
+#        chdir: Project/CoffeeMaker
+
+
+
+    

@@ -1,0 +1,6 @@
+[AppServer]
+192.168.33.100 ansible_ssh_user=vagrant ansible_ssh_private_key_file=../keys/app.key
+
+
+[TestServer]
+192.168.33.200 ansible_ssh_user=vagrant ansible_ssh_private_key_file=../keys/test.key

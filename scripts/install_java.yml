@@ -1,0 +1,26 @@
+---
+- hosts: '{{hostlist}}'
+  become: yes
+  tasks: 
+#sudo add-apt-repository ppa:webupd8team/java
+# Add java repository from PPA and install its signing key.
+# On Ubuntu target:
+  - name: Add java repository from PPA
+    apt_repository:
+      repo: 'ppa:webupd8team/java'
+
+  - name: accept oracle licence
+    shell: /bin/echo debconf shared/accepted-oracle-license-v1-1 select true | /usr/bin/debconf-set-selections
+    sudo: yes
+
+  - name: set licence seen
+    shell: /bin/echo debconf shared/accepted-oracle-license-v1-1 seen true | /usr/bin/debconf-set-selections
+    sudo: yes
+
+  - name: Install latest version of Java 8
+    apt:
+      name: oracle-java8-installer
+      state: latest
+      update_cache: yes
+      force: yes
+

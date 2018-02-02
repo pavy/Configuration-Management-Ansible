@@ -1,0 +1,100 @@
+---
+- hosts: '{{hostlist}}'
+  become: yes
+  vars_prompt:
+    - name: "db_password"
+      prompt: Please enter mysql password
+      private: yes
+
+  tasks: 
+  - debconf:
+      name: mysql-apt-config
+      question: mysql-apt-config/select-server
+      value: mysql-5.7
+      vtype: select
+
+
+  - name: Install latest version of mysql-server
+    apt:
+      deb: http://dev.mysql.com/get/mysql-apt-config_0.6.0-1_all.deb
+      update_cache: yes
+
+  - name: Set MySQL root password
+    debconf:
+      name: mysql-server
+      question: mysql-server/root_password
+      value: '{{db_password}}'
+      vtype: password
+
+  - name: Set MySQL root confirm password
+    debconf:
+      name: mysql-server
+      question: mysql-server/root_password_again
+      value: '{{db_password}}'
+      vtype: password
+
+  - name: Set MySQL Community Server root password
+    debconf:
+      name: mysql-community-server
+      question: mysql-community-server/root-pass
+      value: '{{db_password}}'
+      vtype: password
+
+  - name: Set MySQL Community Server root confirm password
+    debconf:
+      name: mysql-community-server
+      question: mysql-community-server/re-root-pass
+      value: '{{db_password}}'
+      vtype: password
+
+    # Install mysql
+      #dpkg_options="force-confnew"
+  - name: Install MySQL
+    apt: 
+      pkg: '{{ item }}'
+      state: latest 
+      force: yes 
+      update_cache: true 
+    with_items:
+      - mysql-server
+      - mysql-client
+      - libmysqlclient-dev
+ 
+  - name: Creates directory for CoffeeMaker
+    file:
+      path: /etc/mysql/mysql.conf.d/
+      state: directory
+      mode: 0755
+      recurse: yes
+
+  - name: Copy client settings
+    template: 
+      src: templates/mysql.cfg
+      dest: '/etc/mysql/mysql.conf.d/mysqld.cnf'
+      mode: 0600
+
+  - name: install python mysql bindings
+    apt: 
+      name: python-mysqldb
+      state: installed
+    
+
+#  - name: Install MySQL-python module
+#    pip: 
+#      name: MySQL-python
+
+
+  - name: Update password
+    mysql_user: 
+      name: root
+      password: "{{db_password}}"
+      state: present
+      check_implicit_admin: yes
+      login_user: root
+      login_password: "{{db_password}}"
+
+  - name: Copy server settings
+    template: 
+      src: templates/my.cnf 
+      dest: '~/.my.cnf'
+      mode: 0600

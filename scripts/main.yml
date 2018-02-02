@@ -1,0 +1,8 @@
+---
+- import_playbook: install_java.yml hostlist=all
+- import_playbook: install_tomcat.yml hostlist=AppServer
+- import_playbook: install_mysql.yml hostlist=AppServer
+- import_playbook: install_maven.yml hostlist=all
+- import_playbook: install_chrome.yml hostlist=TestServer
+- import_playbook: install_coffeemaker.yml hostlist=AppServer
+- import_playbook: install_selenserver.yml hostlist=TestServer

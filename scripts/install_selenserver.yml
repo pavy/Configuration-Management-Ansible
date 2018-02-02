@@ -1,0 +1,33 @@
+---
+#- import_playbook: install_java.yml hostlist=TestServer
+#- import_playbook: install_maven.yml hostlist=TestServer
+#- import_playbook: install_chrome.yml hostlist=TestServer
+- hosts: '{{hostlist}}'
+  become: yes
+  vars:
+    server_name: "{{groups['AppServer'][0]}}"
+  tasks:
+    - name: Creates directory for Project
+      file:
+        path: Project
+        state: directory
+        mode: 0775
+        recurse: yes
+
+    - name: Clone Onboarding-Selenium repo
+      git:
+        repo: "https://github.com/CSC-326/Onboarding-Selenium.git"
+        dest: 'Project'
+
+    - name: Configuring Server IP address
+      replace:
+        path: Project/src/src/test/java/selenium/tests/WebTest.java
+        regexp: '\blocalhost\b'
+        replace: '{{server_name}}'
+
+    - lineinfile:
+        path: Project/src/src/test/java/selenium/tests/WebTest.java
+        insertafter: '\bheadless\b'
+        line: '        options.addArguments( "no-sandbox");'
+
+    

@@ -1,0 +1,16 @@
+---
+- hosts: '{{hostlist}}'
+  become: yes
+  tasks: 
+
+  - name: Add maven repository from PPA
+    apt_repository:
+      repo: 'ppa:andrei-pozolotin/maven3'
+
+  - name: Install Maven
+    apt:
+      name: maven3
+      state: latest
+      update_cache: yes
+      force: yes
+
