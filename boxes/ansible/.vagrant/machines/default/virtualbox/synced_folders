@@ -1,1 +1,0 @@
-{"virtualbox":{"/home/vagrant/scripts":{"guestpath":"/home/vagrant/scripts","hostpath":"/home/hi/Desktop/DevOps/Homework/HW1/scripts","disabled":false,"__vagrantfile":true},"/vagrant":{"guestpath":"/vagrant","hostpath":"/home/hi/Desktop/DevOps/Homework/HW1/boxes/ansible","disabled":false,"__vagrantfile":true}}}
